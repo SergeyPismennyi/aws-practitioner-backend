@@ -1,0 +1,17 @@
+{
+  "name": "@aws-practitioner/prettier-config",
+  "version": "0.0.0",
+  "main": "index.js",
+  "files": [ "index.js"],
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write \"**/*.js\""
+  },
+  "devDependencies": {
+    "prettier": "2.8.3",
+    "stylelint-prettier": "3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

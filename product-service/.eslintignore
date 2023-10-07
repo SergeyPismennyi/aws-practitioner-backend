@@ -1,6 +1,0 @@
-node_modules
-dist
-
-.eslintrc
-.eslintrc.husky.js
-esbuild.js

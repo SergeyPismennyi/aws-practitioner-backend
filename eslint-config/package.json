@@ -1,0 +1,22 @@
+{
+  "name": "@aws-practitioner/eslint-config",
+  "version": "0.0.0",
+  "main": "index.js",
+  "files": ["index.js"],
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "5.48.2",
+    "@typescript-eslint/parser": "5.48.2",
+    "eslint": "8.32.0",
+    "eslint-config-prettier": "8.6.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "8.40.0",
+    "eslint-import-resolver-typescript": "3.5.5",
+    "eslint-plugin-import": "2.27.5",
+    "typescript": "4.9.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
