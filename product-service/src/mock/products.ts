@@ -1,6 +1,6 @@
-import { IProduct } from '@aws-practitioner/types';
+import { IProduct, IProductList } from '@aws-practitioner/types';
 
-export const products: Array<IProduct> = [
+export const products: IProductList = [
   {
     description: 'Short Product Description1',
     id: '7567ec4b-b10c-48c5-9345-fc73c48a80aa',
