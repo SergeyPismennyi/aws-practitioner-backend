@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const esbuild = require('esbuild');
 
-const functionsDir = `src/api`;
+const functionsDir = `src/handlers`;
 const outDir = `dist`;
 const entryPoints = fs
   .readdirSync(path.join(__dirname, functionsDir))
@@ -10,11 +10,12 @@ const entryPoints = fs
 
 esbuild.build({
   entryPoints,
-  bundle: true,
+  entryNames: 'handlers/[dir]',
   outdir: path.join(__dirname, outDir),
   outbase: functionsDir,
   format: 'cjs',
   platform: 'node',
   target: ['node14'],
-  minify: process.argv.indexOf('-p') >= 0,
+  bundle: true,
+  minify: true,
 });

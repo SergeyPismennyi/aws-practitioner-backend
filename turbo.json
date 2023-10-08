@@ -2,6 +2,13 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "deploy": {
+      "cache": false
+    },
+    "remove": {
       "cache": false
     },
     "lint": {

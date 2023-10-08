@@ -5,14 +5,16 @@
   "license": "ISC",
   "scripts": {
     "build": "tsc && npm run lint && node esbuild.js",
-    "build:prd": "tsc && npm run lint && node esbuild.js -p",
     "format": "prettier --config .prettierrc.js --write \"**/*.{js,ts}\"",
     "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint:fix": "eslint ./src --fix",
+    "deploy": "sls deploy",
+    "remove": "sls remove"
   },
   "devDependencies": {
     "@aws-practitioner/eslint-config": "*",
     "@aws-practitioner/tsconfig": "*",
+    "@aws-practitioner/types": "*",
     "@types/aws-lambda": "^8.10.122",
     "@types/node": "^20.8.2",
     "esbuild": "^0.19.4",

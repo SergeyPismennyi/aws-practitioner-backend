@@ -35,6 +35,7 @@ module.exports = {
       {
         groups: [
           'builtin', // Built-in types are first
+          'external', // Then external
           ['sibling', 'parent'], // Then sibling and parent types. They can be mingled together
           'index', // Then the index file
           'object',
