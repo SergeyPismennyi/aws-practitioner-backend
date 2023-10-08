@@ -18,6 +18,10 @@
     "format": {
       "cache": false,
       "outputs": []
+    },
+    "test": {
+      "dependsOn": ["@aws-practitioner/types#build"],
+      "cache": false
     }
   }
 }

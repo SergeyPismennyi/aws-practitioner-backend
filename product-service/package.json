@@ -8,6 +8,7 @@
     "format": "prettier --config .prettierrc.js --write \"**/*.{js,ts}\"",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
+    "test": "vitest",
     "deploy": "sls deploy",
     "remove": "sls remove"
   },
@@ -19,6 +20,7 @@
     "@types/node": "^20.8.2",
     "esbuild": "^0.19.4",
     "eslint": "^8.50.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }

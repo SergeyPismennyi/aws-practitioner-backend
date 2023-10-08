@@ -1,9 +1,8 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
 import { getProducts } from '../../mock/products';
 import { parseResponse } from '../../utils/response';
 
-export const getProductsList: APIGatewayProxyHandler = async () => {
+export const getProductsList = async () => {
   const products = await getProducts();
 
-  return parseResponse(200, products);
+  return products ? parseResponse(200, products) : parseResponse(404, { message: 'products not found' });
 };
