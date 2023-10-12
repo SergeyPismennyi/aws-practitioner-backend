@@ -11,7 +11,10 @@
     "test": "vitest",
     "deploy": "sls deploy",
     "remove": "sls remove",
-    "offline": "sls offline start"
+    "offline": "sls offline start",
+    "fill-tables": "npm run fill-table:products && npm run fill-table:stocks",
+    "fill-table:products": "aws dynamodb --profile personalAccount batch-write-item --request-items file://tables-default-data/products.json",
+    "fill-table:stocks": "aws dynamodb --profile personalAccount batch-write-item --request-items file://tables-default-data/stocks.json"
   },
   "devDependencies": {
     "@aws-practitioner/eslint-config": "*",

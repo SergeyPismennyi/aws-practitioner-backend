@@ -1,0 +1,92 @@
+{
+  "stocks": [
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "509182b7-f92f-482a-ac68-d2ff649c84dc" },
+          "count": { "N": "12" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "d7808ff9-1734-46de-99c7-748e590a00af" },
+          "count": { "N": "6" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "b856d0c2-4b7f-425a-8968-3e925cf98164" },
+          "count": { "N": "10" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "48c9102b-d5c2-4da7-b789-1fc56516095d" },
+          "count": { "N": "4" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "134a4ecb-4df3-445d-9169-8b3880bc360c" },
+          "count": { "N": "15" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "5cf83aa7-a20f-4584-8d6b-ba11c620ecc2" },
+          "count": { "N": "5" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "515c0d05-55d9-4da5-98c7-8333b3b0d774" },
+          "count": { "N": "6" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "317a0346-a988-4bf4-a8f9-3c20d11dc0a4" },
+          "count": { "N": "11" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "506c0e52-27f4-409a-be79-073f4d3d627b" },
+          "count": { "N": "3" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "506c0e52-27f4-409a-be79-143f4d3d627b" },
+          "count": { "N": "7" }
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "product_id": { "S": "326386e3-0d88-4763-8e93-e5f26790754d" },
+          "count": { "N": "14" }
+        }
+      }
+    }
+  ]
+}
