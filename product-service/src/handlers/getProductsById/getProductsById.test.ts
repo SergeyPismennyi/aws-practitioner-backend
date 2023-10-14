@@ -1,30 +1,34 @@
-import { describe, expect, it } from 'vitest';
+import { IProductWithStock } from '@aws-practitioner/types';
+import { APIGatewayProxyEvent } from 'aws-lambda';
+import { describe, expect, it, vi } from 'vitest';
 
-import * as mockedProducts from '../../mock/products';
-import * as responseUtil from '../../utils/response';
-import { getProductsById } from './index';
+import { getProductsById } from './getProductsById';
+import { ProductWithStockTable } from '../../dynamo-db';
+import { productsWithStock } from '../../mock/products';
+import { parseResponse } from '../../utils';
 
 describe('getProductsById', () => {
-  it('should return a 404 response if productId is missing', async () => {
+  it('should return a 400 response if productId is missing', async () => {
     const event = { pathParameters: {} };
 
-    const response = await getProductsById(event);
-    expect(response).toEqual(responseUtil.parseResponse(404, { message: 'product id is missed' }));
+    const response = await getProductsById(event as unknown as APIGatewayProxyEvent);
+    expect(response).toEqual(parseResponse(400, { message: 'productId is a required field' }));
   });
 
   it('should return a 404 response if product is not found', async () => {
     const productId = 'someProductId';
     const event = { pathParameters: { id: productId } };
-    const response = await getProductsById(event);
+    const response = await getProductsById(event as unknown as APIGatewayProxyEvent);
 
-    expect(response).toEqual(responseUtil.parseResponse(404, { message: 'product not found' }));
+    expect(response).toEqual(parseResponse(400, { message: 'productId must be a valid UUID' }));
   });
 
   it('should return a 200 response with product data if product is found', async () => {
-    const productData = mockedProducts.products[0];
+    const productData = productsWithStock[0] as IProductWithStock;
     const event = { pathParameters: { id: productData?.id } };
-    const response = await getProductsById(event);
+    vi.spyOn(ProductWithStockTable, 'read').mockResolvedValueOnce(productData);
+    const response = await getProductsById(event as unknown as APIGatewayProxyEvent);
 
-    expect(response).toEqual(responseUtil.parseResponse(200, productData));
+    expect(response).toEqual(parseResponse(200, productData));
   });
 });

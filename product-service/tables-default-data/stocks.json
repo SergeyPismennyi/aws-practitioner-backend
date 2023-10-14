@@ -3,7 +3,7 @@
     {
       "PutRequest": {
         "Item": {
-          "product_id": { "S": "509182b7-f92f-482a-ac68-d2ff649c84dc" },
+          "product_id": { "S": "509182b7-f92f-482a-ac68-d2ff629c84de" },
           "count": { "N": "12" }
         }
       }

@@ -1,4 +1,4 @@
-import { IProduct, IProductList } from '@aws-practitioner/types';
+import { IProductList, IProductWithStockList, IStockList } from '@aws-practitioner/types';
 
 export const products: IProductList = [
   {
@@ -13,34 +13,32 @@ export const products: IProductList = [
     price: 15,
     title: 'ProductTitle',
   },
-  {
-    description: 'Short Product Description2',
-    id: '7567ec4b-b10c-48c5-9345-fc73c48a80a3',
-    price: 23,
-    title: 'Product',
-  },
-  {
-    description: 'Short Product Description4',
-    id: '7567ec4b-b10c-48c5-9345-fc73348a80a1',
-    price: 15,
-    title: 'ProductTest',
-  },
+];
+
+export const productsWithStock: IProductWithStockList = [
   {
     description: 'Short Product Description1',
-    id: '7567ec4b-b10c-48c5-9445-fc73c48a80a2',
-    price: 23,
-    title: 'Product2',
+    id: '7567ec4b-b10c-48c5-9345-fc73c48a80aa',
+    price: 24,
+    title: 'ProductOne',
+    count: 1,
   },
   {
     description: 'Short Product Description7',
-    id: '7567ec4b-b10c-45c5-9345-fc73c48a80a1',
+    id: '7567ec4b-b10c-48c5-9345-fc73c48a80a1',
     price: 15,
-    title: 'ProductName',
+    title: 'ProductTitle',
+    count: 2,
   },
 ];
 
-export const getProducts = (productId?: IProduct['id']) => {
-  const data = productId ? products.find(({ id }) => id === productId) : products;
-
-  return Promise.resolve(data);
-};
+export const stockList: IStockList = [
+  {
+    productId: '7567ec4b-b10c-48c5-9345-fc73c48a80aa',
+    count: 1,
+  },
+  {
+    productId: '7567ec4b-b10c-48c5-9345-fc73c48a80a1',
+    count: 2,
+  },
+];
