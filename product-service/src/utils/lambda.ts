@@ -1,6 +1,6 @@
 import { APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda';
 
-import { ObjectSchema } from 'yup';
+import { ObjectSchema, ValidationError } from 'yup';
 
 export const parseResponse = (statusCode: number, response: unknown): APIGatewayProxyResult => ({
   statusCode,
@@ -11,22 +11,35 @@ export const parseResponse = (statusCode: number, response: unknown): APIGateway
   body: typeof response === 'string' ? response : JSON.stringify(response),
 });
 
+export const parseBody = (body = ''): Record<string, unknown> => {
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    throw {
+      statusCode: 400,
+      data: { message: 'Invalid JSON format' },
+    };
+  }
+};
+
 export const validateSchema = (
   code: number,
   schema: ObjectSchema<Record<string, unknown>>,
   obj: Record<string, unknown>
 ) => {
   try {
-    schema.validateSync(obj);
+    schema.validateSync(obj, { abortEarly: false });
   } catch (error) {
-    const { message } = error as Record<string, unknown>;
-    throw { statusCode: code, data: { message } };
+    const { errors } = error as ValidationError;
+    throw { statusCode: code, data: { message: errors.join(', ') } };
   }
 };
 
 export const getLambdaHandler =
   (handler: (event: APIGatewayProxyEvent) => Promise<{ statusCode: number; data: unknown } | null>) =>
   async (event: APIGatewayProxyEvent) => {
+    console.log('new event: ', JSON.stringify(event, null, 2));
+
     try {
       const res = await handler(event);
 

@@ -22,7 +22,7 @@ custom:
   autoswagger:
     apiType: http
     basePath: /dev
-    typefiles: [./../node_modules/@aws-practitioner/types/dist/product-service/index.d.ts]
+    typefiles: [./../node_modules/@aws-practitioner/types/dist/product-service/product.d.ts]
 
 functions:
   getProductsList:
@@ -33,7 +33,7 @@ functions:
           method: GET
           responses:
             200:
-              bodyType: IProductList
+              bodyType: IProductWithStockList
             404:
               description: Products not found
 
@@ -45,9 +45,22 @@ functions:
           method: GET
           responses:
             200:
-              bodyType: IProduct
+              bodyType: IProductWithStock
             404:
               description: Product not found
+
+  createProduct:
+    handler: dist/handlers/createProduct.createProduct
+    events:
+      - http:
+          path: /products
+          method: POST
+          bodyType: ICreateProductRequest
+          responses:
+            200:
+              bodyType: ICreateProductResponse
+            400:
+              description: Params validation error
 
 resources:
   Resources:

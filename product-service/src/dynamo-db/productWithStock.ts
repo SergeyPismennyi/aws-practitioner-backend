@@ -10,7 +10,7 @@ class ProductWithStock extends DynamoDB {
   }
 
   async create({ count, price, title, description }: Omit<IProductWithStock, 'id'>) {
-    const id = randomUUID();
+    const id: string = randomUUID();
 
     await this.transactWrite([
       { Put: { TableName: PRODUCT_TABLE, Item: marshall({ id, price, title, description }) } },

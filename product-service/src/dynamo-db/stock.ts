@@ -9,7 +9,7 @@ class Stock extends DynamoDB {
   }
 
   async create(data: Omit<IStock, 'productId'>) {
-    const product_id = randomUUID();
+    const product_id: string = randomUUID();
     await this.putItem({ product_id, ...data });
 
     return product_id;

@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash';
+import camelCase from 'lodash/camelCase';
 
 export const camelizeKeys = (obj: any): any => {
   if (Array.isArray(obj)) {

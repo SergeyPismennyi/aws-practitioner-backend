@@ -7,7 +7,7 @@ import { products, stockList, productsWithStock } from '../../mock/products';
 import { parseResponse } from '../../utils';
 
 describe('getProductsList', () => {
-  it('should return a 404 response if products are not found', async () => {
+  it('should return 404 status code if products are not found', async () => {
     vi.spyOn(ProductTable, 'read').mockResolvedValueOnce(null);
     vi.spyOn(StockTable, 'read').mockResolvedValueOnce(null);
     const response = await getProductsList({} as APIGatewayProxyEvent);
@@ -15,7 +15,7 @@ describe('getProductsList', () => {
     expect(response).toEqual(parseResponse(404, { message: 'Not found' }));
   });
 
-  it('should return a 200 response with product data if products are found', async () => {
+  it('should return 200 status code with product data if products are found', async () => {
     vi.spyOn(ProductTable, 'read').mockResolvedValueOnce({
       items: products,
       count: products.length,

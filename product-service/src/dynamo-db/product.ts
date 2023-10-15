@@ -9,7 +9,7 @@ class Product extends DynamoDB {
   }
 
   async create(data: Omit<IProduct, 'id'>) {
-    const id = randomUUID();
+    const id: string = randomUUID();
     await this.putItem({ id, ...data });
 
     return id;

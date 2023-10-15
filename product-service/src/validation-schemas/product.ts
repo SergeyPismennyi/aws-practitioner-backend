@@ -6,7 +6,7 @@ export const productIdValidationSchema = yup.object({
 
 export const createProductValidationSchema = yup.object({
   title: yup.string().required(),
-  description: yup.string(),
+  description: yup.string().required(),
   price: yup.number().required(),
   count: yup.number().required(),
 });
