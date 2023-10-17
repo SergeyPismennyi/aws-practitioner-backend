@@ -1,0 +1,55 @@
+service: import-service
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  profile: personalAccount
+  region: eu-west-1
+  stage: dev
+  iam:
+    role: ImportServiceRole
+
+custom:
+  bucketName: sp-import-service-bucket
+
+functions:
+  importProductsFile:
+    handler: dist/handlers/importProductsFile.importProductsFile
+    events:
+      - http:
+          path: /import
+          method: GET
+          request:
+            parameters:
+              querystrings:
+                name: true
+
+resources:
+  Resources:
+    ImportServiceRole:
+        Type: AWS::IAM::Role
+        Properties:
+          RoleName: ImportServiceLambdaS3Access
+          AssumeRolePolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Principal:
+                  Service:
+                    - lambda.amazonaws.com
+                Action: sts:AssumeRole
+          Policies:
+            - PolicyName: ImportServiceAccessPolicy
+              PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                  - Effect: Allow
+                    Action:
+                    - s3:PutObject
+                    - s3:PutObjectAcl
+                    - s3:GetObject
+                    - s3:DeleteObject
+                    Resource:
+                      - arn:aws:s3:::${self:custom.bucketName}/*

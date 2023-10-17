@@ -4,6 +4,7 @@
   "private": false,
   "workspaces": [
     "product-service",
+    "import-service",
     "eslint-config",
     "prettier-config",
     "stylelint-config",
@@ -15,6 +16,9 @@
     "product-service:deploy": "turbo run deploy --filter @aws-practitioner/product-service",
     "product-service:remove": "turbo run remove --filter @aws-practitioner/product-service",
     "product-service:fill-tables": "turbo run fill-tables --filter @aws-practitioner/product-service",
+    "import-service:build": "turbo run build --filter @aws-practitioner/import-service",
+    "import-service:deploy": "turbo run deploy --filter @aws-practitioner/import-service",
+    "import-service:remove": "turbo run remove --filter @aws-practitioner/import-service",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "turbo run format",
