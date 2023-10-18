@@ -10,6 +10,9 @@ provider:
   stage: dev
   iam:
     role: ImportServiceRole
+  environment:
+    BUCKET_MANE: sp-import-service-bucket
+    REGION: eu-west-1
 
 custom:
   bucketName: sp-import-service-bucket

@@ -1,0 +1,13 @@
+{
+  "extends": "@aws-practitioner/tsconfig/base.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "declaration": true,
+    "outDir": "dist",
+    "declarationMap": true,
+    "strict": true,
+    "emitDeclarationOnly": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

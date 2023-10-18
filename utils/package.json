@@ -1,0 +1,35 @@
+{
+  "name": "@aws-practitioner/utils",
+  "version": "0.0.0",
+  "author": "Siarhei Pismennyi",
+  "license": "ISC",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "scripts": {
+    "build": "npm run lint && tsc -p tsconfig.json && node esbuild.js",
+    "format": "prettier --config .prettierrc.js --write \"**/*.{js,ts}\"",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
+  },
+  "devDependencies": {
+    "@aws-practitioner/eslint-config": "*",
+    "@aws-practitioner/tsconfig": "*",
+    "@aws-practitioner/types": "*",
+    "@types/aws-lambda": "^8.10.122",
+    "@types/node": "^20.8.2",
+    "esbuild": "^0.19.4",
+    "eslint": "^8.50.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "yup": "^1.3.2"
+  }
+}
