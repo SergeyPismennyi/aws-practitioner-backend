@@ -15,7 +15,7 @@ esbuild.build({
   outbase: functionsDir,
   format: 'cjs',
   platform: 'node',
-  target: ['node14'],
+  target: ['node18'],
   bundle: true,
   minify: true,
 });

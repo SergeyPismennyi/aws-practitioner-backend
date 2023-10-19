@@ -29,6 +29,7 @@
   "dependencies": {
     "@aws-practitioner/utils": "*",
     "@aws-sdk/client-s3": "^3.429.0",
-    "@aws-sdk/s3-request-presigner": "^3.429.0"
+    "@aws-sdk/s3-request-presigner": "^3.429.0",
+    "csv-parser": "^3.0.0"
   }
 }

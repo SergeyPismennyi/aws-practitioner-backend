@@ -1,4 +1,4 @@
-import { APIGatewayProxyResult, APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyResult } from 'aws-lambda';
 import { ObjectSchema, ValidationError } from 'yup';
 
 export const parseResponse = (statusCode: number, response: unknown): APIGatewayProxyResult => ({
@@ -35,8 +35,7 @@ export const validateSchema = (
 };
 
 export const getLambdaHandler =
-  (handler: (event: APIGatewayProxyEvent) => Promise<{ statusCode: number; data: unknown } | null>) =>
-  async (event: APIGatewayProxyEvent) => {
+  (handler: (event: any) => Promise<{ statusCode: number; data: unknown } | null>) => async (event: unknown) => {
     console.log('new event: ', JSON.stringify(event, null, 2));
 
     try {
@@ -49,6 +48,7 @@ export const getLambdaHandler =
         data: unknown;
       };
 
+      console.log('error: ', error);
       return parseResponse(statusCode, data);
     }
   };
