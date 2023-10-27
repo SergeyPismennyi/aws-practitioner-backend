@@ -13,9 +13,18 @@ provider:
   environment:
     BUCKET_MANE: sp-import-service-bucket
     REGION: eu-west-1
+    SQS_URL:
+      Fn::Join:
+        - ""
+        - - https://sqs.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - Ref: AWS::AccountId
+          - /${self:custom.SQSName}
 
 custom:
   bucketName: sp-import-service-bucket
+  SQSName: ProductsQueue
 
 package:
   individually: true
@@ -67,6 +76,7 @@ resources:
                 Action: sts:AssumeRole
           ManagedPolicyArns:
             - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+            - arn:aws:iam::aws:policy/AmazonSQSFullAccess
           Policies:
             - PolicyName: ImportServiceAccessPolicy
               PolicyDocument:

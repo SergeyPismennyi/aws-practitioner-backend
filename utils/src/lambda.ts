@@ -34,6 +34,15 @@ export const validateSchema = (
   }
 };
 
+export const softValidateSchema = (schema: ObjectSchema<Record<string, unknown>>, obj: Record<string, unknown>) => {
+  try {
+    schema.validateSync(obj, { abortEarly: false });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const getLambdaHandler =
   (handler: (event: any) => Promise<{ statusCode: number; data: unknown } | null>) => async (event: unknown) => {
     console.log('new event: ', JSON.stringify(event, null, 2));

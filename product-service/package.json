@@ -17,6 +17,7 @@
     "fill-table:stocks": "aws dynamodb --profile personalAccount batch-write-item --request-items file://tables-default-data/stocks.json"
   },
   "devDependencies": {
+    "@aws-practitioner/utils": "*",
     "@aws-practitioner/eslint-config": "*",
     "@aws-practitioner/tsconfig": "*",
     "@aws-practitioner/types": "*",

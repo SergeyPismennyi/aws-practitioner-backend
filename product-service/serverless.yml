@@ -11,8 +11,14 @@ provider:
   environment:
     PRODUCTS_TABLE_NAME: !Ref DynamoDBProducts
     STOCKS_TABLE_NAME: !Ref DynamoDBStocks
+    SQS_URL: !Ref ProductsQueue
   iam:
     role: DynamoDBPolicy
+
+package:
+  individually: true
+  exclude:
+    - ./**
 
 plugins:
   - serverless-auto-swagger
@@ -27,6 +33,9 @@ custom:
 functions:
   getProductsList:
     handler: dist/handlers/getProductsList.getProductsList
+    package:
+      include:
+        - dist/handlers/getProductsList.js
     events:
       - http:
           path: /products
@@ -39,6 +48,9 @@ functions:
 
   getProductsById:
     handler: dist/handlers/getProductsById.getProductsById
+    package:
+      include:
+        - dist/handlers/getProductsById.js
     events:
       - http:
           path: /products/{id}
@@ -51,6 +63,9 @@ functions:
 
   createProduct:
     handler: dist/handlers/createProduct.createProduct
+    package:
+      include:
+        - dist/handlers/createProduct.js
     events:
       - http:
           path: /products
@@ -61,6 +76,20 @@ functions:
               bodyType: ICreateProductResponse
             400:
               description: Params validation error
+
+  catalogBatchProcess:
+    handler: dist/handlers/catalogBatchProcess.catalogBatchProcess
+    package:
+      include:
+        - dist/handlers/catalogBatchProcess.js
+    events:
+      - sqs:
+          batchSize: 5
+          maximumBatchingWindow: 30
+          arn:
+            Fn::GetAtt:
+              - ProductsQueue
+              - Arn
 
 resources:
   Resources:
@@ -76,6 +105,9 @@ resources:
                 Service:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+          - arn:aws:iam::aws:policy/AmazonSQSFullAccess
         Policies:
           - PolicyName: DynamoDBLambdasAccessPolicy
             PolicyDocument:
@@ -118,3 +150,8 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+    ProductsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ProductsQueue

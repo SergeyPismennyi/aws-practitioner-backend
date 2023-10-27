@@ -1,7 +1,10 @@
 import { ReadableStream } from 'stream/web';
+import { IProductWithStockList } from '@aws-practitioner/types';
 import { getLambdaHandler } from '@aws-practitioner/utils';
 import { S3Client, GetObjectCommand, CopyObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { SQSClient, SendMessageCommand } from '@aws-sdk/client-sqs';
 import { S3Event } from 'aws-lambda';
+import { SQS_URL } from '../../constants';
 import { parseCSVFile } from '../../utils';
 
 const _importFileParser = async (event: S3Event) => {
@@ -12,10 +15,9 @@ const _importFileParser = async (event: S3Event) => {
   const client = new S3Client({ region: region });
   const getCommand = new GetObjectCommand({ Bucket: bucketName, Key: fileKey });
   const webStream = (await client.send(getCommand)).Body?.transformToWebStream();
-  const parseData = await parseCSVFile(webStream as ReadableStream);
+  const productsData = (await parseCSVFile(webStream as ReadableStream)) as IProductWithStockList;
 
-  console.log('parsed data: ', parseData);
-
+  // move file to parsed/
   const copyCommand = new CopyObjectCommand({
     Bucket: bucketName,
     CopySource: `${bucketName}/${fileKey}`,
@@ -26,6 +28,22 @@ const _importFileParser = async (event: S3Event) => {
 
   await client.send(copyCommand);
   await client.send(deleteCommand);
+
+  // send data to SQS
+  const sqsClient = new SQSClient({ region });
+
+  productsData.forEach(product => {
+    try {
+      sqsClient.send(
+        new SendMessageCommand({
+          QueueUrl: SQS_URL,
+          MessageBody: JSON.stringify(product),
+        })
+      );
+    } catch (e) {
+      console.log(`SQS sending error: ${e}`);
+    }
+  });
 
   return { statusCode: 200, data: null };
 };
