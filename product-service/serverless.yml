@@ -4,21 +4,17 @@ frameworkVersion: "3"
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs18.x
   profile: personalAccount
   region: eu-west-1
   stage: dev
   environment:
     PRODUCTS_TABLE_NAME: !Ref DynamoDBProducts
     STOCKS_TABLE_NAME: !Ref DynamoDBStocks
-    SQS_URL: !Ref ProductsQueue
+    SNS_TOPIC: !Ref SNSCreateProductTopic
+    REGION: eu-west-1
   iam:
     role: DynamoDBPolicy
-
-package:
-  individually: true
-  exclude:
-    - ./**
 
 plugins:
   - serverless-auto-swagger
@@ -33,9 +29,6 @@ custom:
 functions:
   getProductsList:
     handler: dist/handlers/getProductsList.getProductsList
-    package:
-      include:
-        - dist/handlers/getProductsList.js
     events:
       - http:
           path: /products
@@ -48,9 +41,6 @@ functions:
 
   getProductsById:
     handler: dist/handlers/getProductsById.getProductsById
-    package:
-      include:
-        - dist/handlers/getProductsById.js
     events:
       - http:
           path: /products/{id}
@@ -63,9 +53,6 @@ functions:
 
   createProduct:
     handler: dist/handlers/createProduct.createProduct
-    package:
-      include:
-        - dist/handlers/createProduct.js
     events:
       - http:
           path: /products
@@ -79,13 +66,10 @@ functions:
 
   catalogBatchProcess:
     handler: dist/handlers/catalogBatchProcess.catalogBatchProcess
-    package:
-      include:
-        - dist/handlers/catalogBatchProcess.js
     events:
       - sqs:
           batchSize: 5
-          maximumBatchingWindow: 30
+          maximumBatchingWindow: 60
           arn:
             Fn::GetAtt:
               - ProductsQueue
@@ -108,6 +92,7 @@ resources:
         ManagedPolicyArns:
           - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
           - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+          - arn:aws:iam::aws:policy/AmazonSNSFullAccess
         Policies:
           - PolicyName: DynamoDBLambdasAccessPolicy
             PolicyDocument:
@@ -155,3 +140,28 @@ resources:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: ProductsQueue
+
+    SNSCreateProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+
+    SNSCreateProductSuccessSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: aws_create_product_success@gmail.com
+        TopicArn: !Ref SNSCreateProductTopic
+        FilterPolicy:
+          status:
+            - success
+
+    SNSCreateProductErrorSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: aws_create_product_error@gmail.com
+        TopicArn: !Ref SNSCreateProductTopic
+        FilterPolicy:
+          status:
+            - error

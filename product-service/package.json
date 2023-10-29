@@ -17,10 +17,10 @@
     "fill-table:stocks": "aws dynamodb --profile personalAccount batch-write-item --request-items file://tables-default-data/stocks.json"
   },
   "devDependencies": {
-    "@aws-practitioner/utils": "*",
     "@aws-practitioner/eslint-config": "*",
     "@aws-practitioner/tsconfig": "*",
     "@aws-practitioner/types": "*",
+    "@aws-practitioner/utils": "*",
     "@types/aws-lambda": "^8.10.122",
     "@types/node": "^20.8.2",
     "esbuild": "^0.19.4",
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.428.0",
+    "@aws-sdk/client-sns": "^3.437.0",
     "@aws-sdk/lib-dynamodb": "^3.428.0",
     "@aws-sdk/util-dynamodb": "^3.428.0",
     "crypto": "^1.0.1",
