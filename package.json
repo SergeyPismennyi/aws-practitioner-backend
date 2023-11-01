@@ -5,6 +5,7 @@
   "workspaces": [
     "product-service",
     "import-service",
+    "authorization-service",
     "eslint-config",
     "prettier-config",
     "stylelint-config",
@@ -20,6 +21,9 @@
     "import-service:build": "turbo run build --filter @aws-practitioner/import-service",
     "import-service:deploy": "turbo run deploy --filter @aws-practitioner/import-service",
     "import-service:remove": "turbo run remove --filter @aws-practitioner/import-service",
+    "authorization-service:build": "turbo run build --filter @aws-practitioner/authorization-service",
+    "authorization-service:deploy": "turbo run deploy --filter @aws-practitioner/authorization-service",
+    "authorization-service:remove": "turbo run remove --filter @aws-practitioner/authorization-service",
     "utils:build": "turbo run build --filter @aws-practitioner/utils",
     "test": "turbo run test",
     "lint": "turbo run lint",
