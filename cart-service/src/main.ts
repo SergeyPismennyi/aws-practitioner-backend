@@ -1,5 +1,7 @@
 import helmet from 'helmet';
 import { bootstrap } from './bootstrap';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const port = process.env.PORT || 4000;
 

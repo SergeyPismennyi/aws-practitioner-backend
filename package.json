@@ -6,7 +6,6 @@
     "product-service",
     "import-service",
     "authorization-service",
-    "cart-service",
     "eslint-config",
     "prettier-config",
     "stylelint-config",

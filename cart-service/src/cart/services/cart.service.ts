@@ -1,54 +1,62 @@
 import { Injectable } from '@nestjs/common';
-
-import { v4 } from 'uuid';
-
-import { Cart } from '../models';
+import { UpdatedCard } from '../models';
+import { DB, TCartStatus } from '../../db';
 
 @Injectable()
 export class CartService {
-  private userCarts: Record<string, Cart> = {};
+  async findByUserId(userId: string): Promise<UpdatedCard | null> {
+    const cart = await DB.carts.findByUserId(userId, 'OPEN');
 
-  findByUserId(userId: string): Cart {
-    return this.userCarts[userId];
-  }
+    if (cart) {
+      const items = await DB.cartItems.findByCartId(cart.id);
 
-  createByUserId(userId: string) {
-    const id = v4(v4());
-    const userCart = {
-      id,
-      items: [],
-    };
-
-    this.userCarts[userId] = userCart;
-
-    return userCart;
-  }
-
-  findOrCreateByUserId(userId: string): Cart {
-    const userCart = this.findByUserId(userId);
-
-    if (userCart) {
-      return userCart;
+      return { ...cart, items };
     }
 
-    return this.createByUserId(userId);
+    return null;
   }
 
-  updateByUserId(userId: string, { items }: Cart): Cart {
-    const { id, ...rest } = this.findOrCreateByUserId(userId);
+  async createByUserId(userId: string) {
+    return await DB.carts.create(userId);
+  }
+
+  async findOrCreateByUserId(userId: string): Promise<UpdatedCard> {
+    let cart = await DB.carts.findByUserId(userId, 'OPEN');
+    let items = [];
+
+    if (cart) {
+      items = (await DB.cartItems.findByCartId(cart.id)) || [];
+    } else {
+      cart = await this.createByUserId(userId);
+    }
+
+    return { id: cart.id, items };
+  }
+
+  async updateByUserId(userId: string, { items }: UpdatedCard): Promise<UpdatedCard> {
+    const cart = await this.findOrCreateByUserId(userId);
 
     const updatedCart = {
-      id,
-      ...rest,
+      ...cart,
       items: [...items],
     };
 
-    this.userCarts[userId] = { ...updatedCart };
+    await DB.cartItems.delete(cart.id);
+
+    if (items.length) {
+      await DB.cartItems.createMany(cart.id, items);
+    }
 
     return { ...updatedCart };
   }
 
-  removeByUserId(userId): void {
-    this.userCarts[userId] = null;
+  async removeByUserId(userId) {
+    const cart = await DB.carts.findByUserId(userId, 'OPEN');
+    await DB.cartItems.delete(cart.id);
+    await DB.carts.deleteByUserId(userId, 'OPEN');
+  }
+
+  async updateStatusById(cartId: string, status: TCartStatus) {
+    return DB.carts.updateStatusById(cartId, status);
   }
 }

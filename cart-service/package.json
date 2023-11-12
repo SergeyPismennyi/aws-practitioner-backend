@@ -1,5 +1,5 @@
 {
-  "name": "@aws-practitioner/cart-service",
+  "name": "cart-service",
   "version": "0.0.1",
   "author": "",
   "license": "UNLICENSED",
@@ -17,7 +17,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "fill:db": "node scripts/fillDataBase.js"
+    "fill:db": "node scripts/fillDataBase.js",
+    "offline": "npm run build && sls offline start",
+    "deploy": "npm run build && sls deploy",
+    "remove": "sls remove"
   },
   "dependencies": {
     "@nestjs/common": "^7.5.1",
@@ -30,6 +33,7 @@
     "aws-lambda": "^1.0.7",
     "dotenv": "^8.2.0",
     "helmet": "^4.2.0",
+    "lodash": "^4.17.21",
     "passport": "^0.4.1",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.0",
@@ -41,9 +45,6 @@
     "uuid": "^8.3.1"
   },
   "devDependencies": {
-    "@aws-practitioner/eslint-config": "*",
-    "@aws-practitioner/tsconfig": "*",
-    "@aws-practitioner/types": "*",
     "@nestjs/cli": "^7.5.2",
     "@nestjs/schematics": "^7.2.1",
     "@nestjs/testing": "^7.5.1",
