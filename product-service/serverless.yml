@@ -4,13 +4,15 @@ frameworkVersion: "3"
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs18.x
   profile: personalAccount
   region: eu-west-1
   stage: dev
   environment:
     PRODUCTS_TABLE_NAME: !Ref DynamoDBProducts
     STOCKS_TABLE_NAME: !Ref DynamoDBStocks
+    SNS_TOPIC: !Ref SNSCreateProductTopic
+    REGION: eu-west-1
   iam:
     role: DynamoDBPolicy
 
@@ -62,6 +64,17 @@ functions:
             400:
               description: Params validation error
 
+  catalogBatchProcess:
+    handler: dist/handlers/catalogBatchProcess.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          maximumBatchingWindow: 60
+          arn:
+            Fn::GetAtt:
+              - ProductsQueue
+              - Arn
+
 resources:
   Resources:
     DynamoDBPolicy:
@@ -76,6 +89,10 @@ resources:
                 Service:
                   - lambda.amazonaws.com
               Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+          - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+          - arn:aws:iam::aws:policy/AmazonSNSFullAccess
         Policies:
           - PolicyName: DynamoDBLambdasAccessPolicy
             PolicyDocument:
@@ -118,3 +135,33 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+    ProductsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ProductsQueue
+
+    SNSCreateProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+
+    SNSCreateProductSuccessSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: aws_create_product_success@gmail.com
+        TopicArn: !Ref SNSCreateProductTopic
+        FilterPolicy:
+          status:
+            - success
+
+    SNSCreateProductErrorSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        Endpoint: aws_create_product_error@gmail.com
+        TopicArn: !Ref SNSCreateProductTopic
+        FilterPolicy:
+          status:
+            - error

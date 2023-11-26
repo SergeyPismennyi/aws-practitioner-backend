@@ -1,0 +1,124 @@
+service: import-service
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  profile: personalAccount
+  region: eu-west-1
+  stage: dev
+  iam:
+    role: ImportServiceRole
+  environment:
+    BUCKET_MANE: sp-import-service-bucket
+    REGION: eu-west-1
+    SQS_URL:
+      Fn::Join:
+        - ""
+        - - https://sqs.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - Ref: AWS::AccountId
+          - /${self:custom.SQSName}
+
+custom:
+  bucketName: sp-import-service-bucket
+  SQSName: ProductsQueue
+
+package:
+  individually: true
+  exclude:
+    - ./**
+
+functions:
+  importProductsFile:
+    handler: dist/handlers/importProductsFile.importProductsFile
+    package:
+      include:
+        - dist/handlers/importProductsFile.js
+    events:
+      - http:
+          path: /import
+          method: GET
+          request:
+            parameters:
+              querystrings:
+                name: true
+
+  importProductsFilePrivate:
+    handler: dist/handlers/importProductsFile.importProductsFile
+    package:
+      include:
+        - dist/handlers/importProductsFile.js
+    events:
+      - http:
+          path: /private/import
+          method: GET
+          cors:
+            - enabled: true
+            - origin: '*'
+            - headers: 'Content-Type,Authorization'
+            - methods: 'GET'
+          request:
+            parameters:
+              querystrings:
+                name: true
+          authorizer:
+            name: tokenAuthorizer
+            arn:
+              Fn::Join:
+                - ""
+                - - "arn:aws:lambda:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - ":function:authorization-service-dev-basicAuthorizer"
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+
+  importFileParser:
+    handler: dist/handlers/importFileParser.importFileParser
+    package:
+      include:
+        - dist/handlers/importFileParser.js
+    events:
+     - s3:
+        bucket: ${self:custom.bucketName}
+        event: s3:ObjectCreated:*
+        rules:
+          - prefix: uploaded/
+          - suffix: .csv
+        existing: true
+
+resources:
+  Resources:
+    ImportServiceRole:
+        Type: AWS::IAM::Role
+        Properties:
+          RoleName: ImportServiceLambdaS3Access
+          AssumeRolePolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Principal:
+                  Service:
+                    - lambda.amazonaws.com
+                Action: sts:AssumeRole
+          ManagedPolicyArns:
+            - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+            - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+          Policies:
+            - PolicyName: ImportServiceAccessPolicy
+              PolicyDocument:
+                Version: "2012-10-17"
+                Statement:
+                  - Effect: Allow
+                    Action:
+                    - s3:PutObject
+                    - s3:PutObjectAcl
+                    - s3:GetObject
+                    - s3:DeleteObject
+                    Resource:
+                      - arn:aws:s3:::${self:custom.bucketName}/*

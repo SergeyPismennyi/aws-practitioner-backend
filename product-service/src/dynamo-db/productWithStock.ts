@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { IProductWithStock } from '@aws-practitioner/types';
+import { IProductWithStock, Optional } from '@aws-practitioner/types';
 import { unmarshall, marshall } from '@aws-sdk/util-dynamodb';
 import { DynamoDB } from './dynamoDB';
 import { PRODUCT_TABLE, STOCK_TABLE } from '../constants';
@@ -9,12 +9,12 @@ class ProductWithStock extends DynamoDB {
     super('');
   }
 
-  async create({ count, price, title, description }: Omit<IProductWithStock, 'id'>) {
-    const id: string = randomUUID();
+  async create({ id, count, price, title, description }: Optional<IProductWithStock, 'id'>) {
+    const _id = id || randomUUID();
 
     await this.transactWrite([
-      { Put: { TableName: PRODUCT_TABLE, Item: marshall({ id, price, title, description }) } },
-      { Put: { TableName: STOCK_TABLE, Item: marshall({ product_id: id, count }) } },
+      { Put: { TableName: PRODUCT_TABLE, Item: marshall({ id: _id, price, title, description }) } },
+      { Put: { TableName: STOCK_TABLE, Item: marshall({ product_id: _id, count }) } },
     ]);
 
     return id;
