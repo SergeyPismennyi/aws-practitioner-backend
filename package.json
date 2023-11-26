@@ -1,0 +1,34 @@
+{
+  "name": "@aws-practitioner/backend",
+  "version": "0.0.0",
+  "private": false,
+  "workspaces": [
+    "product-service",
+    "eslint-config",
+    "prettier-config",
+    "stylelint-config",
+    "tsconfig",
+    "types"
+  ],
+  "scripts": {
+    "product-service:build": "turbo run build --filter @aws-practitioner/product-service",
+    "product-service:deploy": "turbo run deploy --filter @aws-practitioner/product-service",
+    "product-service:remove": "turbo run remove --filter @aws-practitioner/product-service",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "turbo run format",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@aws-practitioner/eslint-config": "*",
+    "husky": "8.0.3",
+    "lint-staged": "13.2.2",
+    "npm-run-all": "4.1.5",
+    "turbo": "1.10.6",
+    "esbuild": "^0.19.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "packageManager": "npm@8.11.0"
+}

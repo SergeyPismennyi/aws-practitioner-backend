@@ -1,0 +1,8 @@
+node_modules
+dist
+swagger
+
+.DS_Store
+.turbo
+.vscode
+.serverless

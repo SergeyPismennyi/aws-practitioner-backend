@@ -1,0 +1,46 @@
+service: product-service
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  profile: personalAccount
+  region: eu-west-1
+  stage: dev
+
+plugins:
+  - serverless-auto-swagger
+  - serverless-offline
+
+custom:
+  autoswagger:
+    apiType: http
+    basePath: /dev
+    typefiles: [./../node_modules/@aws-practitioner/types/dist/product-service/index.d.ts]
+
+functions:
+  getProductsList:
+    handler: dist/handlers/getProductsList.getProductsList
+    events:
+      - http:
+          path: /products
+          method: GET
+          responses:
+            200:
+              bodyType: IProductList
+            404:
+              description: Products not found
+
+
+  getProductsById:
+    handler: dist/handlers/getProductsById.getProductsById
+    events:
+      - http:
+          path: /products/{id}
+          method: GET
+          responses:
+            200:
+              bodyType: IProduct
+            404:
+              description: Product not found

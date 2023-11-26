@@ -1,0 +1,27 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "deploy": {
+      "cache": false
+    },
+    "remove": {
+      "cache": false
+    },
+    "lint": {
+      "cache": false,
+      "outputs": []
+    },
+    "format": {
+      "cache": false,
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["@aws-practitioner/types#build"],
+      "cache": false
+    }
+  }
+}
