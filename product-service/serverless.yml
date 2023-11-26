@@ -8,6 +8,11 @@ provider:
   profile: personalAccount
   region: eu-west-1
   stage: dev
+  environment:
+    PRODUCTS_TABLE_NAME: !Ref DynamoDBProducts
+    STOCKS_TABLE_NAME: !Ref DynamoDBStocks
+  iam:
+    role: DynamoDBPolicy
 
 plugins:
   - serverless-auto-swagger
@@ -17,7 +22,7 @@ custom:
   autoswagger:
     apiType: http
     basePath: /dev
-    typefiles: [./../node_modules/@aws-practitioner/types/dist/product-service/index.d.ts]
+    typefiles: [./../node_modules/@aws-practitioner/types/dist/product-service/product.d.ts]
 
 functions:
   getProductsList:
@@ -28,10 +33,9 @@ functions:
           method: GET
           responses:
             200:
-              bodyType: IProductList
+              bodyType: IProductWithStockList
             404:
               description: Products not found
-
 
   getProductsById:
     handler: dist/handlers/getProductsById.getProductsById
@@ -41,6 +45,76 @@ functions:
           method: GET
           responses:
             200:
-              bodyType: IProduct
+              bodyType: IProductWithStock
             404:
               description: Product not found
+
+  createProduct:
+    handler: dist/handlers/createProduct.createProduct
+    events:
+      - http:
+          path: /products
+          method: POST
+          bodyType: ICreateProductRequest
+          responses:
+            200:
+              bodyType: ICreateProductResponse
+            400:
+              description: Params validation error
+
+resources:
+  Resources:
+    DynamoDBPolicy:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: DynamoDBLambdasAccessRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: DynamoDBLambdasAccessPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:Query
+                    - dynamodb:Scan
+                    - dynamodb:GetItem
+                    - dynamodb:PutItem
+                    - dynamodb:UpdateItem
+                    - dynamodb:DeleteItem
+                  Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+
+    DynamoDBProducts:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: products
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    DynamoDBStocks:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: stocks
+        AttributeDefinitions:
+          - AttributeName: product_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: product_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
